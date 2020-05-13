@@ -1,0 +1,65 @@
+<html>
+<head>
+	<title>Point Location</title>
+	<!-- <link rel="stylesheet" type="text/css" href="main.css" /> -->
+	<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+	</script>
+	<script type="text/javascript"
+	  src="http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+	</script>
+</head>
+
+<body>
+	<h1>Point Location in Dynamic Planar Subdivisions</h1>
+	<div style="max-width: 900">
+	<p>
+		This webpage serves as a detailed overview of Oh and Ahn's data structure toward a fully dynamic point location algorithm. The method of Oh and Ahn achieves achieve an update time of $O(\sqrt{n}log{n}(log{log{n}})^{3/2})$ and a query time of $O(log{n}(log{log{n}})^2)$, where $n$ is the number of edges in the subdivisions. When the user is restricted to only deleting edges from the initial subdivision, their method provides $O(\alpha(n))$ update time and $O(logn)$ query time, where $\alpha()$ is the inverse ackerman function.
+	</p>
+	<h2> Contents </h2>
+		<ul> 
+			<li> Background </li>
+			<li> Data Structure Overview </li>
+			<li> More Stuff </li>
+			<li> Other Stuff </li>
+		</ul>
+	<h2> Background </h2>
+		<p>
+			Given a set of non-intersecting edges that subdivide the plane into non-overlapping faces, the goal is to design a dynamic data structure that can support the operation $locate(x)$ in which the user provides a query point $x$ in the plane, and the face containing $x$ is reported to the user. Note that the subdivision need not be connected, provided that there are no intersecting edges. <b> FIGURE NEEDED </b>
+		</p>
+		<p>
+			The fundamental terminology relevant to the dynamic approach is largely the same as that of the static approach. There are, however, some basic concepts that are novel and essential to understanding the method of Oh and Ahn.
+		</p>
+		<p>
+			<b>Half-edges.</b> Every edge in the subdivision is considered to be comprised of two directed edges oriented such that the face incident to the half-edge lies to its left relative to its direction. Note that while edges are considered to be comprised of two half-edges, all operations concerning edges (Remove, Insert) involve the whole, indivisible edge. <b> FIGURE NEEDED </b>
+		</p>
+		<p>
+			<b>Outer/Inner Boundaries.</b> The presence of half-edges motivates a more concrete distinction for the different kinds of boundaries a face in the subdivision can have. An <i> Outer Boundary </i> is the component defining the boundary of a face, $F$, such that $F$ is incident to the half-edges traversable in a counter-clockwise orientation. Every other connected component incident to $F$ is called an <i>Inner Boundary</i>. <b> FIGURE NEEDED </b>
+		</p>
+		<p>
+			<b>Edge types.</b> All edges are said to be in one of three states: Old, Communal, and New. The exact way in which edges change types will be explained in the update algorithms.
+		</p>
+	<h2> Data Structure Overview </h2>
+		<p> 
+			The data structure, $D$, used to resolve queries is comprised of two data structures, one containing Old and Communal edges, $D_o$, and the other containing New and Communal edges, $D_n$. The update and query protocols for each data structure will be explained in turn.
+		</p>
+		<h3> Semi-Dynamic Data Structure </h3>
+			<p>
+				The data structure described in this section is only semi-dynamic insofar as it supports only $delete(e)$ (where $e$ is an edge in the subdivision) and $locate(x)$. The mechanics of this data structure will be explained here and its use in the fully dynamic solution will be explained later.
+			</p>
+			<p> 
+				The semi-dynamic data structure itself consists of two components: a <b>static point location data structure</b>, which keeps track of the initial subdivision, and a <b>disjoint-set</b> of faces which keeps track the current faces in the subdivision as edges are deleted. In the static subdivison, the $m$ faces are uniquely identifiable with names $1 ... m$ (note: $m$ is $O(n)$ as this is a planar subdivision). The face identifiers are stored in a disjoint-set data structure, $S$. The mechanics of $S$ are such that two faces are in the same set if and only if the two faces have been merged into one face. As faces is in this initial subdivision do not overlap, every face in $S$ is a singleton set. An edge set containing all of the edges in the subdivision is maintained such that every every edge points to its incident face(s).
+			</p>
+			<p>
+				When $delete(e)$ is processed, find the incident faces to $e$ in the <b>static</b> subdivision in $O(1)$ time. If $e$ is incident to two faces, $A$ and $B$, find the sets in $S$ containing $A$ and $B$. If they are in separate sets, they are merged into one set all in $O(\alpha(n))$ time. The root in $S$ corresponding to this new, merged set is given a new unique name. If the two faces are already in the same set in $S$, no change is needed. Maintaining the disjoint set in this way ensures that there is a one-to-one correspondence between the number of faces in the current subdivision and the number of disjoint sets in $S$.
+			</p>
+			<p>
+				To resolve a $locate(x)$ query, simply resolve $locate(x)$ in the static subdivision in $O(logn)$ (let result be $F$), find the subset in $S$ that contains $F$ in $O(\alpha(n))$, and report this subset.
+			</p>
+			<p>
+				<b>Key Takeaways:</b> A semi-dynamic data structure that only supports $delete(e)$ and $locate(x)$ can be achieved by simultaneously maintaining the initial static point location data structure and a disjoint-set of current faces. With $O(nlogn)$ preprocessing to form the static data structure and $O(\alpha(n))$ update time, $O(logn)$ query time is achieved.
+			</p>
+
+	</div>
+</body>
+</html>
