@@ -75,8 +75,13 @@
 			</ul>
 			Note that since a given edge can be incident to at most two faces, that edge will be stored twice in the queue as a boundary components for the two incident faces. Also, every edge in $E_n$ points to the corresponding element(s) in the queue.
 		</p>
+		<p>
+			The vertices in $M_n$ are maintained in a balanced BST so that there can be a check if a point in the plane is a vertex of $M_n$ in $O(logn)$. Additionally, for every vertex, th edges in $M_n$ adjacent to it are stored in BST in clockwise order around the vertex.
+		</p>
 		<b><i> NOTE TO SELF: The root of the queue representing the entire subdivision could be outer face of the subdivision to which everything is an inner boundary. This allows a mechanism to systematically access every face's particular queue. The paper doesn't say this so maybe it isn't necessary (or is assumed to be obvious) </i></b>
-		
+		<p>
+			<b> Mechanics.</b> Initially, every edge is set to old, so $D_n$ is empty. When $insert(e)$ is executed, the one face, $F$, in $M_o$ that $e$ intersects is found. All edges on the <b>outer</b> boundary of $F$ are set to communal. If $e$ is inserted such that it connects the outer boundary of $F$ to an inner boundary of $F$, then the edges on the inner boundary are set to communal as well. The new edge that is inserted is set to new. Notice that after this insertion, $D_n$ is always populated with at least $e$ and the outer boundary of $F$, and it may also be populated with a certain inner boundary of $F$ if the condition above is met. Similarly, when $delete(e)$ is executed, the outer boundary of the face(s) incident to $e$ is set to communal. 
+		</p>
 	</div>
 </body>
 </html>
