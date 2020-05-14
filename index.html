@@ -17,7 +17,7 @@
 	<h1>Point Location in Dynamic Planar Subdivisions</h1>
 	<div style="max-width: 900">
 	<p>
-		This webpage serves as a detailed overview of Oh and Ahn's data structure toward a fully dynamic point location algorithm. The method of Oh and Ahn achieves achieve an update time of $O(\sqrt{n}log{n}(log{log{n}})^{3/2})$ and a query time of $O(log{n}(log{log{n}})^2)$, where $n$ is the number of edges in the subdivisions. When the user is restricted to only deleting edges from the initial subdivision, their method provides $O(\alpha(n))$ update time and $O(logn)$ query time, where $\alpha()$ is the inverse ackerman function.
+		This webpage serves as a detailed overview of Oh and Ahn's data structure toward a fully dynamic point location algorithm. The method of Oh and Ahn achieves achieve an update time of $O(\sqrt{n}logn{(loglogn)}^{3/2})$ and a query time of $O(logn{(loglogn)}^2)$, where $n$ is the number of edges in the subdivisions. When the user is restricted to only deleting edges from the initial subdivision, their method provides $O(\alpha(n))$ update time and $O(logn)$ query time, where $\alpha()$ is the inverse ackerman function.
 	</p>
 	<h2> Contents </h2>
 		<ul> 
@@ -64,8 +64,19 @@
 			</p>
 		<h3> Fully Dynamic Data Structure </h3>
 		<p>
-			
+			As noted, the fully dynamic point location data structure consists of two sub data structures, $D_o$ and $D_n$. For the rest of the explanation, $E_o$ and $E_n$ will refer to the set of old + communal edges and communal + new edges, respectively, and $M_o$ and $M_n$ will refer to the subdivisions induced by the corresponding edge sets. $D_o$ is thus the data structure maintaing $E_o$ and $D_n$ is the data structure maintaining $E_n$. $D_o$ is implemented as the semi-dynamic data structure explained above. This section will focus more on the mechanics $D_n$ toward a fully-dynamic data structure, and explain how edges change types.
 		</p>
+		<p>
+			<b> Structure.</b> The dynamic data structure underlying $D_n$ needs to support verticle ray-shooting queries for $E_n$. The method of Oh and Ahn uses the data structure by Chan and Nekrich which achieves an update time of $O(lognloglogn)$ and a query time of $O(logn{(loglogn)}^{2}$). Also, each component of the boundary of each face in $M_n$ is stored in a concatenable queue. This queue supports insertion, deletion, splitting the queue into two, and merging two queus into one. The edges for a given boundary component can thus be accesed sequentially as they appear in the boundary, and the queues for each boundary component can be merged so the boundary components for $M_n$ can be traversed. By implementing the queue with a 2-3 tree, all operations are supported in $O(logn)$ time where $n$ is the number of elements in the queue. The organization of this queue is briefly described as follows:
+			<ul>
+				<li> Choose an element of the queue, make this the root of the 2-3 tree (and thus the way to access the elements of the queue) </li>
+				<li> If the queue represents an outer boundary of $F$, make the root point to the roots of all inner boundaries of $F$ </li>
+				<li> If the queue represents an inner boundary of $F$, make the root point to the root of the corresponding outer boundary of $F$ </li>
+			</ul>
+			Note that since a given edge can be incident to at most two faces, that edge will be stored twice in the queue as a boundary components for the two incident faces. Also, every edge in $E_n$ points to the corresponding element(s) in the queue.
+		</p>
+		<b><i> NOTE TO SELF: The root of the queue representing the entire subdivision could be outer face of the subdivision to which everything is an inner boundary. This allows a mechanism to systematically access every face's particular queue. The paper doesn't say this so maybe it isn't necessary (or is assumed to be obvious) </i></b>
+		
 	</div>
 </body>
 </html>
