@@ -2,14 +2,14 @@
 <head>
 	<title>Point Location</title>
 	<!-- <link rel="stylesheet" type="text/css" href="main.css" /> -->
-	<!-- <script type="text/x-mathjax-config">
+	<script type="text/x-mathjax-config">
   MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
-	</script> -->
-	<!-- <script type="text/javascript"
-	  src="http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-	</script> -->
+	</script>
 	<script type="text/javascript"
-	  src="./LaTeXMathML.js">
+	  src="http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+	</script>
+	<!-- <script type="text/javascript"
+	  src="./LaTeXMathML.js"> -->
 	</script>
 </head>
 
@@ -80,7 +80,10 @@
 		</p>
 		<b><i> NOTE TO SELF: The root of the queue representing the entire subdivision could be outer face of the subdivision to which everything is an inner boundary. This allows a mechanism to systematically access every face's particular queue. The paper doesn't say this so maybe it isn't necessary (or is assumed to be obvious) </i></b>
 		<p>
-			<b> Mechanics.</b> Initially, every edge is set to old, so $D_n$ is empty. When $insert(e)$ is executed, the one face, $F$, in $M_o$ that $e$ intersects is found. All edges on the <b>outer</b> boundary of $F$ are set to communal. If $e$ is inserted such that it connects the outer boundary of $F$ to an inner boundary of $F$, then the edges on the inner boundary are set to communal as well. The new edge that is inserted is set to new. Notice that after this insertion, $D_n$ is always populated with at least $e$ and the outer boundary of $F$, and it may also be populated with a certain inner boundary of $F$ if the condition above is met. Similarly, when $delete(e)$ is executed, the outer boundary of the face(s) incident to $e$ is set to communal. 
+			<b>Reconstruction Period.</b> Before explaining the update mechanics for the data structure, the notion of a reconstruction period needs to be introduced. Let $f : \mathbb{N} \to \mathbb{N}$ be an increasing function such that $f(n)/2 \le f(n/2) \le n/4$ for every $n$ greater than some constant. $f(n)$ defines what is called a <i>reconstruction period</i> for the data structure in which $f(n)$ updates are allowed to be processed before the data structure gets rebuilt. Here, $n$ is the number of edges currently in the data structure. Rebuilding the data structure consists of building the static point location data structure in $O(nlogn)$ from the existing subdivision after $f(n)$ edges are inserted/deleted. This notion will be a critical component in the amortized runtime analysis.
+		</p>
+		<p>
+			<b> Mechanics.</b> When the data structure is rebuilt at the end of a reconstruction period, every edge is set to old, so $D_n$ is empty. When $insert(e)$ is executed, the one face, $F$, in $M_o$ that $e$ intersects is found. All edges on the <b>outer</b> boundary of $F$ are set to communal. If $e$ is inserted such that it connects the outer boundary of $F$ to an inner boundary of $F$, then the edges on the inner boundary are set to communal as well. The new edge that is inserted is set to new. Notice that after this insertion, $D_n$ is always populated with at least $e$ and the outer boundary of $F$, and it may also be populated with a certain inner boundary of $F$ if the condition above is met. Similarly, when $delete(e)$ is executed, the outer boundary of the face(s) incident to $e$ is set to communal. 
 		</p>
 	</div>
 </body>
