@@ -136,6 +136,24 @@
 				<b>Key Takeaways.</b> The fully dynamic data structure utilizes the vertical ray-shooting data structure of Chan and Nekrich and a concatenable queue (implemented as 2-3 trees) for all connected components for the new and communal edges. The time needed to query the vertical ray-shooting structure is $O(logn \cdot {(loglogn)}^{2})$ and the time to update it is is $O(logn \cdot log log n)$. After $f(n)$ updates, the static data structure is rebuilt from the current edges in the subdivision in $O(nlogn)$, amortizing to $O(nlogn / f(n))$ per update during the reconstruction period. The time to execute all operations on the concatenable queue is $O(logn)$. The total number of communal edges that ned to be inserted into the dynamic data structure after any update is $O(n / f(n))$. The total amortized update time for $insert(e)$ is $O(f(n) \cdot logn \cdot {(loglogn)}^{2} + nlogn/f(n) + n \cdot logn \cdot log log n / f(n))$, which simplifies to $O(f(n) \cdot logn \cdot {(loglogn)}^{2} + n / f(n) \cdot logn \cdot log log n )$.
 			</p>
 			<h4>Edge Deletion</h4>
+			<p>
+				When an edge is deleted, $\gamma$ is produced from $M_o$ and newly-made communal edges are inserted into $M_n$ in the same manner as when $insert(e)$ is executed. Executing $delete(e)$ entails updating the semi-dynamic $D_o$ as explained above, as well as the concatenable queues for the faces in the subdivision comprised of old and communal edges. For $D_n$, the concatenable queues for the new and communal edges need to be updated along with the pointers of the effected edges in $E_n$. There are four cases for how $e$ can be oriented relative to its incident face(s): both endpoints of $e$ lie on the same connected component, the two endpoints lie on two distinct connected components, only one endpoint lies on a connected component, or no edges lie on a connected component <b>FIGURE NEEDED</b>. The necessary updates will be discussed for each case.
+			</p>
+			<p>
+				<b>Case 1: Two faces $F_1$ and $F_2$ are merged into one face $F$.</b> The two queues representing the boundary components $F_1$ and $F_2$ can be found in constant time. The queues are split along their junctions with $e$ and merged in $O(logn)$ time. The previous inner boundaries of $F_1$ and $F_2$ are made to point to the newly formed $F$ which now encloses them. As there are $O(f(n))$ inner boundaries, this can be done in $O(f(n))$ time. The pointers in $E_n$ do not change.
+			</p>
+			<p>
+				<b>Case 2: A boundary component $\gamma$ of $F$ is split into two boundary components of $F$.</b> The boundary component containing $e$ is found in constant time. $e$ is removed from this component creating to separate boundary components. If the boundary component was an inner boundary of $F$, the two components are made to point at $F$. Otherwise, $e$ connects the outerboundary of $F$ to an inner boundary of $F$, so one of the resulting boundary components becomes the exclusive outer boundary of $F$ and the other is an inner boundary of $F$. This is all done in $O(logn)$ time.
+			</p>
+			<p>
+				<b>Case 3: An edge of a boundary component $\gamma$ disappears.</b> The edge is simply removed from the $\gamma$ and $\gamma$ does not need to be split into two new connected components. The time for this case is $O(logn)$.
+			</p>
+			<p>
+				<b>Case 4: A boundary component $\gamma$ disappears.</b> In this case, the connected component $\gamma$ consists exclusively of $e$. The singleton queue is thus removed, and the pointer from its enclosing face $F$ to it is removed as well. This case can be done in constant time.
+			</p>
+			<p>
+				The total time to simply delete the edge from the data structure and handle the inner boundary pointers is $O(f(n) + logn)$. To insert the communal edges induced by deleting $e$ is $O(f(n) \cdot logn \cdot {(loglogn)}^{2} + n / f(n) \cdot logn \cdot log log n )$ as before. Likewise, the amortized reconstruction time is $O(nlogn / f(n))$. Removing $e$ from the vertical ray-shooting data structure is $O(logn \cdot log log n)$. Therefore, the total cost to process $delete(e)$ reduces to $O(f(n) \cdot logn \cdot {(loglogn)}^{2} + n / f(n) \cdot logn \cdot log log n )$, the same as for $insert(e)$.
+			</p>
 	</div>
 </body>
 </html>
