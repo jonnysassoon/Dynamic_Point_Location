@@ -23,8 +23,11 @@
 		<ul> 
 			<li> Background </li>
 			<li> Data Structure Overview </li>
-			<li> More Stuff </li>
-			<li> Other Stuff </li>
+			<ul>
+				<li> Semi-Dynamic Data Structure </li>
+				<li> Fully Dynamic Data Structure </li>
+			</ul>
+			<li> Query Procedure </li>
 		</ul>
 	<h2> Background </h2>
 		<p>
@@ -181,6 +184,12 @@
 	</p>
 	<p>
 		<i>Proof.</i> Assume that two points $x$ and $y$ are in the same face $F$ in $M$. There is a face $F'$ in $M_o$ or in $M_n$ whose outer boundary coincides with the outer boundary of $F$ by Lemma 11. Consider a face $F''$ in $M_o$ or $M_n$ enclosde by $F'$. Neither $x$ nor $y$ is enclosed by $F$ because the edge set of $M_o$ (and $M_n$) is a subset of the edge set of $M$. Since the complete subdivision $M$ is planar, this implies that $x$ and $y$ are in the same face in both $M_o$ and $M_n$. Now assume that two points $x$ and $y$ are in different faces in $M$. Let $F_x$ and $F_y$ be the faces containing $x$ and $y$ in $M$, respectively. This means that $x$ is not enclosed by $F_y$ or $y$ is not enclosed by $F_x$. The outer boundaries of $F_x$ and $F_y$ are distinct. By Lemma 11, there are faces $F_x'$ and $F_y'$ in $M_o$ or in $M_n$ whose outer boundaries coincide with the outer boundaries of $F_x$ and $F_y$, respectively. Note that $x$ is enclosed by $F_x'$ and $y$ is enclosed by $F_y'$. However, either $x$ is not enclosed by $F_y'$ or $y$ is not enclosed by $F_x'$. Therefore, $x$ and $y$ are in different faces in $M_o$ or $M_n$, which proves the lemma.
+	</p>
+	<p>
+		As a consequence of Lemma 12, all points in $F$ in $M$ map to the same pair of faces in $M_o$ and $M_n$. All faces in $M$ are thus uniquely identifiable by theses two faces. Therefore, if $F_o$ and $F_n$ are known, $F$ can be found by mapping the names of $F_o$ and $F_n$ to the unique face $F$ associated with those faces. Oh and Ahn do not explain how this mapping is maintained or if the association of $F_o$, $F_n$, and $F$ is calculated when the former two are found. If the mapping is maintained, the locating $F$ from $F_o$ and $F_n$ would ostensibly take constant time, while the overhead for maintaing the mapping is left out. If the mapping is calculated for each query, it is not clear that this can be done in constant time, or at least time strictly less than the time to query the vertical ray-shooting data structure. Regardless, the mapping indeed exists as proven, and Oh and Ahn assert that the time for $locate(x)$ resolution is equal to the time to query the vertical ray-shooting data structure: $O(logn \cdot {(loglogn)}^{2})$.
+	</p>
+	<p>
+		<b>Key Takeaways:</b> Every point $x$ in a face $F$ from the complete subdivision $M$ will be in the same pair of faces $F_o$ and $F_n$ in $M_o$ and $M_n$. The faces $F_o$ and $F_n$ can be found in $O(logn \cdot {(loglogn)}^{2})$, and the mapping to $F$ can be executed with no additional overhead. Therefore, $locate(x)$ can be executed in $O(logn \cdot {(loglogn)}^{2})$.
 	</p>
 	</div>
 </body>
