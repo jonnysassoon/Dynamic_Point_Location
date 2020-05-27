@@ -17,7 +17,10 @@
 	<h1>Point Location in Dynamic Planar Subdivisions</h1>
 	<div style="max-width: 900">
 	<p>
-		This webpage serves as a detailed overview of Oh and Ahn's data structure toward a fully dynamic point location algorithm. The method of Oh and Ahn achieves an amortized update time of $O(\sqrt{n}logn{(loglogn)}^{3/2})$ and a query time of $O(logn{(loglogn)}^2)$, where $n$ is the number of edges in the subdivisions. When the user is restricted to only deleting edges from the initial subdivision, their method provides $O(\alpha(n))$ update time and $O(logn)$ query time, where $\alpha()$ is the inverse ackerman function.
+		Oh and Ahn provide a data structure that supports fully dynamic point location algorithms. Their method achieves an amortized update time of $O(\sqrt{n}logn{(loglogn)}^{3/2})$ and a query time of $O(logn{(loglogn)}^2)$, where $n$ is the number of edges in the subdivisions. When the user is restricted to only deleting edges from the initial subdivision, their method provides $O(\alpha(n))$ update time and $O(logn)$ query time, where $\alpha()$ is the inverse ackerman function.
+	</p>
+	<p>
+		This webpage serves as a detailed overview of Oh and Ahn's data structure. The intention is to provide a depiction that is more accessible than the technical paper. Only information that is directly necessary to understanding the data structure's mechanics are provided, so most of the lemmas (and their proofs) are not included and explicit algorithms are not provided. However, when lemmas are mentioned, they are numbered as they appear in the paper so the reader can easily refer to them if more information is desired.
 	</p>
 	<h2> Contents </h2>
 		<ul> 
