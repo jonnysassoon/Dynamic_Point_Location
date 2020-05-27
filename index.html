@@ -28,6 +28,7 @@
 				<li> Fully Dynamic Data Structure </li>
 			</ul>
 			<li> Query Procedure </li>
+			<li> Conclusion </li>
 		</ul>
 	<h2> Background </h2>
 		<p>
@@ -70,7 +71,7 @@
 				As noted, the fully dynamic point location data structure consists of two sub data structures, $D_o$ and $D_n$. For the rest of the explanation, $E_o$ and $E_n$ will refer to the set of old + communal edges and communal + new edges, respectively, and $M_o$ and $M_n$ will refer to the subdivisions induced by the corresponding edge sets. $D_o$ is thus the data structure maintaing $E_o$ and $D_n$ is the data structure maintaining $E_n$. $D_o$ is implemented as the semi-dynamic data structure explained above. This section will focus more on the mechanics $D_n$ toward a fully-dynamic data structure, and explain how edges change types.
 			</p>
 			<p>
-				<b> Structure.</b> The dynamic data structure underlying $D_n$ needs to support verticle ray-shooting queries for $E_n$. The method of Oh and Ahn uses the data structure by Chan and Nekrich, and as done in the paper, the update and query time for this data structure will be denoted by $U(n)$ and $Q(n)$, respectively. <b><i>TODO: Note that Q(n) is omega(logn) etc</i></b> Also, each component of the boundary of each face in $M_n$ is stored in a concatenable queue. This queue supports insertion, deletion, splitting the queue into two, and merging two queus into one. The edges for a given boundary component can thus be accesed sequentially as they appear in the boundary, and the queues for each boundary component can be merged so the boundary components for $M_n$ can be traversed. By implementing the queue with a 2-3 tree, all operations are supported in $O(logn)$ time where $n$ is the number of elements in the queue. The organization of this queue is briefly described as follows:
+				<b> Structure.</b> The dynamic data structure underlying $D_n$ needs to support verticle ray-shooting queries for $E_n$. The method of Oh and Ahn uses the data structure by Chan and Nekrich, and as done in the paper, the update and query time for this data structure will be denoted by $U(n)$ and $Q(n)$, respectively. Note that $U(n) = \Omega(logn)$, $U(n) = o(n)$, and $Q(n) = \Omega(logn)$. Also, each component of the boundary of each face in $M_n$ is stored in a concatenable queue. This queue supports insertion, deletion, splitting the queue into two, and merging two queus into one. The edges for a given boundary component can thus be accesed sequentially as they appear in the boundary, and the queues for each boundary component can be merged so the boundary components for $M_n$ can be traversed. By implementing the queue with a 2-3 tree, all operations are supported in $O(logn)$ time where $n$ is the number of elements in the queue. The organization of this queue is briefly described as follows:
 				<ul>
 					<li> Choose an element of the queue, make this the root of the 2-3 tree (and thus the way to access the elements of the queue) </li>
 					<li> If the queue represents an outer boundary of $F$, make the root point to the roots of all inner boundaries of $F$ </li>
@@ -136,7 +137,7 @@
 				<b>Pointers for Edges.</b> The final step in updating the data structure for $insert(e)$ is making sure the edges in $E_n$ point to the correct elements in the concatenable queue. As in this step edges are only inserted, the only edges whose pointers are modified are the old edges in $\gamma$ that are changed to communal. In this case, when the old edges are inserted into the concatenable queue, the edge can be added to $E_n$ and the pointer can be set to the new element in the queue.
 			</p>
 			<p>
-				The time to execute all operations on the concatenable queue is $O(logn)$. The time needed to query the vertical ray-shooting structure is $Q(n)$ and the time to update it is is $U(n)$. After $f(n)$ updates, the static data structure is rebuilt from the current edges in the subdivision in $O(nlogn)$ time, amortizing to $O(nlogn / f(n))$ per update during the reconstruction period. The total number of communal edges that need to be inserted into the dynamic data structure after any update is $O(n / f(n))$. Therefore, the total amortized update time for $insert(e)$ is $O(f(n)Q(n) + nlogn/f(n) + n U(n) / f(n))$, which <b><i>TODO: Need to include that Q(n) is omega(logn), etc <b><i> simplifies to $O(f(n)Q(n) + n / f(n) U(n))$.
+				The time to execute all operations on the concatenable queue is $O(logn)$. The time needed to query the vertical ray-shooting structure is $Q(n)$ and the time to update it is is $U(n)$. After $f(n)$ updates, the static data structure is rebuilt from the current edges in the subdivision in $O(nlogn)$ time, amortizing to $O(nlogn / f(n))$ per update during the reconstruction period. The total number of communal edges that need to be inserted into the dynamic data structure after any update is $O(n / f(n))$. Therefore, the total amortized update time for $insert(e)$ is $O(f(n)Q(n) + nlogn/f(n) + n U(n) / f(n))$. Since $U(n) = \Omega(logn)$ the time complexity simplifies to $O(f(n)Q(n) + n / f(n) U(n))$.
 			</p>
 			<h4>Edge Deletion</h4>
 			<p>
@@ -161,36 +162,40 @@
 				<b>Key Takeaways.</b> The fully dynamic data structure utilizes the vertical ray-shooting data structure of Chan and Nekrich and a concatenable queue (implemented as 2-3 trees) for all connected components for the new and communal edges. A reconstruction period is defined in which $f(n)$ updates are allowed where $f : \mathbb{N} \to \mathbb{N}$ is an increasing function such that $f(n)/2 \le f(n/2) \le n/4$ for every $n$ greater than some constant. After the reconstruction period, the static data structure is made from all edges in the current subdivision. The dynamic data structure can be maintained such that it allows the insertion and deletion of edges in $O(f(n)Q(n) + n / f(n)U(n))$.
 			</p>
 	<h2> Query Procedure </h2>
-	<p>
-		The goal of this section is to explain how to answer $locate(x)$ where $x$ is a point in the plane. The complete subdivision $M$ is the union of $M_o$ and $M_n$ which is underlied by $D_o$ and $D_n$. Let $F_o$ and $F_n$ be the faces in $M_o$ and $M_n$, respectively, containing the point $x$. $F_o$ can be calculated in $O(logn)$ as described above. For $F_n$, the edge $e$ immediately above $x$ is calculated using the vertical ray-shooting data structure in $D_n$. The two faces incident to $e$ are accessed in $O(1)$. Oh an Ahn argue that because the half-edges for an edge are oriented consistenly, it can be determined which of the two faces contain $x$ in constant time. However, I do not see how this is possible because the orientation of $e$ will be the same relative to $x$ whether $e$ forms an outer boundary relative to $x$ (and $x$ is inside that outer boundary), or $e$ forms an inner boundary relative to $x$ (and $x$ is in the face enclosing $e$). It is not obvious to me how this can be determined with only a constant number of additional calculations. Nonetheless, it will be assumed that Oh and Ahn's assertion is corrected and that $F_n$ is calculable in $Q(n)$.
-	</p>
-	<p>
-		There are three lemmas in Oh and Ahn's paper that are necessary for resolving queries. The proofs are presented as they appear in the paper as they are short, straightforward, and essential to answering point location queries. 
-	</p>
-	<p>
-		<b> Lemma 10. </b> <i>No face of $M$ contains both an old edge and a new edge in its outer boundary.</i>
-	</p>
-	<p>
-		<i>Proof.</i> Assume to the contrary that both a new edge $e_n$ and an old edge $e_o$ lie on the outer boundary of a face $F$ of $M$. Note that $e_n$ is inserted after the latest reconstruction. When $e_n$ was inserted, all outer boundary edges of the face $F'$ that was intersected by $e_n$ in $M_o$ at the moment were set to communal. Since a communal edge is set to old only by a reconstruction, the only possibility for $e_o$ to remain as old is that $e_o$ was not on the outer boundary of $F'$ but on the outer boundary of another face in $M_o$, and after then it has become an outer boundary edge of $F$ by a series of splits and merges of the faces that are incident to $e_o$. These splits and merges occur only by insertions and deletions of edges, and $e_o$ is set to communal by such a change to the face that is incident to $e_o$, and remains communal afterwards. This contradicts that $e_o$ is old, and this case never occurs.
-	</p>
-	<p>
-		<b> Lemma 11. </b> <i>For any face $F$ in $M$, there exists a face in $M_o$ or in $M_n$ whose outer boundary coincides with the outer boundary of $F$.</i>
-	</p>
-	<p>
-		<i>Proof.</i> By Lemma 10, the outer boundary of $F$ contains either no new edge or no old edge. Consider the case that the outer boundary of $F$ contains no new edge, that is, all edges on the outer boundary of $F$ are in $M_o$. No edge of $M_o$ intersects $F$ because all edges of $M_o$ appear in $M$ but no edge of $M$ intersects $F$. Thus there is a face in $M_o$ whose outer boundary coincides with the outer boundary of $F$. The lemma for the case that the outer boundary of $F$ contains no old edge can similarly be proven.
-	</p>
-	<p>
-		<b> Lemma 12. </b> <i>For any two points in the plane, they are in the same face in $M$ if and only if they are in the same face in $M_o$ and in the same face in $M_n$.</i>
-	</p>
-	<p>
-		<i>Proof.</i> Assume that two points $x$ and $y$ are in the same face $F$ in $M$. There is a face $F'$ in $M_o$ or in $M_n$ whose outer boundary coincides with the outer boundary of $F$ by Lemma 11. Consider a face $F''$ in $M_o$ or $M_n$ enclosde by $F'$. Neither $x$ nor $y$ is enclosed by $F$ because the edge set of $M_o$ (and $M_n$) is a subset of the edge set of $M$. Since the complete subdivision $M$ is planar, this implies that $x$ and $y$ are in the same face in both $M_o$ and $M_n$. Now assume that two points $x$ and $y$ are in different faces in $M$. Let $F_x$ and $F_y$ be the faces containing $x$ and $y$ in $M$, respectively. This means that $x$ is not enclosed by $F_y$ or $y$ is not enclosed by $F_x$. The outer boundaries of $F_x$ and $F_y$ are distinct. By Lemma 11, there are faces $F_x'$ and $F_y'$ in $M_o$ or in $M_n$ whose outer boundaries coincide with the outer boundaries of $F_x$ and $F_y$, respectively. Note that $x$ is enclosed by $F_x'$ and $y$ is enclosed by $F_y'$. However, either $x$ is not enclosed by $F_y'$ or $y$ is not enclosed by $F_x'$. Therefore, $x$ and $y$ are in different faces in $M_o$ or $M_n$, which proves the lemma.
-	</p>
-	<p>
-		As a consequence of Lemma 12, all points in $F$ in $M$ map to the same pair of faces in $M_o$ and $M_n$. All faces in $M$ are thus uniquely identifiable by theses two faces. Therefore, if $F_o$ and $F_n$ are known, $F$ can be found by mapping the names of $F_o$ and $F_n$ to the unique face $F$ associated with those faces. Oh and Ahn do not explain how this mapping is maintained or if the association of $F_o$, $F_n$, and $F$ is calculated when the former two are found. If the mapping is maintained, the locating $F$ from $F_o$ and $F_n$ would ostensibly take constant time, while the overhead for maintaing the mapping is left out. If the mapping is calculated for each query, it is not clear that this can be done in constant time, or at least time strictly less than the time to query the vertical ray-shooting data structure. Regardless, the mapping indeed exists as proven, and Oh and Ahn assert that the time for $locate(x)$ resolution is equal to the time to query the vertical ray-shooting data structure: $Q(n)$.
-	</p>
-	<p>
-		<b>Key Takeaways:</b> Every point $x$ in a face $F$ from the complete subdivision $M$ will be in the same pair of faces $F_o$ and $F_n$ in $M_o$ and $M_n$. The faces $F_o$ and $F_n$ can be found in $Q(n)$, and the mapping to $F$ can be executed with no additional overhead. Therefore, $locate(x)$ can be executed in $Q(n)$.
-	</p>
+		<p>
+			The goal of this section is to explain how to answer $locate(x)$ where $x$ is a point in the plane. The complete subdivision $M$ is the union of $M_o$ and $M_n$ which is underlied by $D_o$ and $D_n$. Let $F_o$ and $F_n$ be the faces in $M_o$ and $M_n$, respectively, containing the point $x$. $F_o$ can be calculated in $O(logn)$ as described above. For $F_n$, the edge $e$ immediately above $x$ is calculated using the vertical ray-shooting data structure in $D_n$. The two faces incident to $e$ are accessed in $O(1)$. Oh an Ahn argue that because the half-edges for an edge are oriented consistenly, it can be determined which of the two faces contain $x$ in constant time. However, I do not see how this is possible because the orientation of $e$ will be the same relative to $x$ whether $e$ forms an outer boundary relative to $x$ (and $x$ is inside that outer boundary), or $e$ forms an inner boundary relative to $x$ (and $x$ is in the face enclosing $e$). It is not obvious to me how this can be determined with only a constant number of additional calculations. Nonetheless, it will be assumed that Oh and Ahn's assertion is corrected and that $F_n$ is calculable in $Q(n)$.
+		</p>
+		<p>
+			There are three lemmas in Oh and Ahn's paper that are necessary for resolving queries. The proofs are presented as they appear in the paper as they are short, straightforward, and essential to answering point location queries. 
+		</p>
+		<p>
+			<b> Lemma 10. </b> <i>No face of $M$ contains both an old edge and a new edge in its outer boundary.</i>
+		</p>
+		<p>
+			<i>Proof.</i> Assume to the contrary that both a new edge $e_n$ and an old edge $e_o$ lie on the outer boundary of a face $F$ of $M$. Note that $e_n$ is inserted after the latest reconstruction. When $e_n$ was inserted, all outer boundary edges of the face $F'$ that was intersected by $e_n$ in $M_o$ at the moment were set to communal. Since a communal edge is set to old only by a reconstruction, the only possibility for $e_o$ to remain as old is that $e_o$ was not on the outer boundary of $F'$ but on the outer boundary of another face in $M_o$, and after then it has become an outer boundary edge of $F$ by a series of splits and merges of the faces that are incident to $e_o$. These splits and merges occur only by insertions and deletions of edges, and $e_o$ is set to communal by such a change to the face that is incident to $e_o$, and remains communal afterwards. This contradicts that $e_o$ is old, and this case never occurs. $\blacksquare$
+		</p>
+		<p>
+			<b> Lemma 11. </b> <i>For any face $F$ in $M$, there exists a face in $M_o$ or in $M_n$ whose outer boundary coincides with the outer boundary of $F$.</i>
+		</p>
+		<p>
+			<i>Proof.</i> By Lemma 10, the outer boundary of $F$ contains either no new edge or no old edge. Consider the case that the outer boundary of $F$ contains no new edge, that is, all edges on the outer boundary of $F$ are in $M_o$. No edge of $M_o$ intersects $F$ because all edges of $M_o$ appear in $M$ but no edge of $M$ intersects $F$. Thus there is a face in $M_o$ whose outer boundary coincides with the outer boundary of $F$. The lemma for the case that the outer boundary of $F$ contains no old edge can similarly be proven. $\blacksquare$
+		</p>
+		<p>
+			<b> Lemma 12. </b> <i>For any two points in the plane, they are in the same face in $M$ if and only if they are in the same face in $M_o$ and in the same face in $M_n$.</i>
+		</p>
+		<p>
+			<i>Proof.</i> Assume that two points $x$ and $y$ are in the same face $F$ in $M$. There is a face $F'$ in $M_o$ or in $M_n$ whose outer boundary coincides with the outer boundary of $F$ by Lemma 11. Consider a face $F''$ in $M_o$ or $M_n$ enclosde by $F'$. Neither $x$ nor $y$ is enclosed by $F$ because the edge set of $M_o$ (and $M_n$) is a subset of the edge set of $M$. Since the complete subdivision $M$ is planar, this implies that $x$ and $y$ are in the same face in both $M_o$ and $M_n$. Now assume that two points $x$ and $y$ are in different faces in $M$. Let $F_x$ and $F_y$ be the faces containing $x$ and $y$ in $M$, respectively. This means that $x$ is not enclosed by $F_y$ or $y$ is not enclosed by $F_x$. The outer boundaries of $F_x$ and $F_y$ are distinct. By Lemma 11, there are faces $F_x'$ and $F_y'$ in $M_o$ or in $M_n$ whose outer boundaries coincide with the outer boundaries of $F_x$ and $F_y$, respectively. Note that $x$ is enclosed by $F_x'$ and $y$ is enclosed by $F_y'$. However, either $x$ is not enclosed by $F_y'$ or $y$ is not enclosed by $F_x'$. Therefore, $x$ and $y$ are in different faces in $M_o$ or $M_n$, which proves the lemma. $\blacksquare$
+		</p>
+		<p>
+			As a consequence of Lemma 12, all points in $F$ in $M$ map to the same pair of faces in $M_o$ and $M_n$. All faces in $M$ are thus uniquely identifiable by theses two faces. Therefore, if $F_o$ and $F_n$ are known, $F$ can be found by mapping the names of $F_o$ and $F_n$ to the unique face $F$ associated with those faces. Oh and Ahn do not explain how this mapping is maintained or if the association of $F_o$, $F_n$, and $F$ is calculated when the former two are found. If the mapping is maintained, the locating $F$ from $F_o$ and $F_n$ would ostensibly take constant time, while the overhead for maintaing the mapping is left out. If the mapping is calculated for each query, it is not clear that this can be done in constant time, or at least time strictly less than the time to query the vertical ray-shooting data structure. Regardless, the mapping indeed exists as proven, and Oh and Ahn assert that the time for $locate(x)$ resolution is equal to the time to query the vertical ray-shooting data structure: $Q(n)$.
+		</p>
+		<p>
+			<b>Key Takeaways:</b> Every point $x$ in a face $F$ from the complete subdivision $M$ will be in the same pair of faces $F_o$ and $F_n$ in $M_o$ and $M_n$. The faces $F_o$ and $F_n$ can be found in $Q(n)$, and the mapping to $F$ can be executed with no additional overhead. Therefore, $locate(x)$ can be executed in $Q(n)$.
+		</p>
+	<h2> Conclusion </h2>
+		<p>
+			The complete dynamic data structure allows queries to be processed after the insertion and deletion of edges. It is comprised of both a semi-dynamic data structure that only adapts from edge deletion, and a fully dynamic data structure that adapts from edge deletion and insertion. The mechanics of this data structure is such that updates can be processed in $O(f(n)Q(n) + n / f(n)U(n))$ amoritzed time. The query procedure allows the face containing query point $x$ to be reported in $Q(n)$. The reconstruction period, $f(n)$, is chosen to be $\sqrt{nU(n)Q(n)}$, and the data structure of Chan and Nekrich yield $Q(n) = O(log(loglogn)^{3/2})$ and $U(n) = O(lognloglogn)$. Therefore, Oh and Ahn provide a data structure that allows for dynamic point location queries with amortized update time of $O(\sqrt{n}logn{(loglogn)}^{3/2})$ and query time of $O(logn{(loglogn)}^2)$.
+		</p>
 	</div>
 </body>
 </html>
