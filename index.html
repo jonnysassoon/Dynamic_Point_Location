@@ -11,6 +11,7 @@
 	<!-- <script type="text/javascript"
 	  src="./LaTeXMathML.js"> -->
 	</script>
+	<link rel="stylesheet" href="index.css">
 </head>
 
 <body>
@@ -35,13 +36,17 @@
 		</ul>
 	<h2> Background </h2>
 		<p>
-			Given a set of non-intersecting edges that subdivide the plane into non-overlapping faces, the goal is to design a dynamic data structure that can support the operation $locate(x)$ in which the user provides a query point $x$ in the plane, and the face containing $x$ is reported to the user. Note that the subdivision need not be connected, provided that there are no intersecting edges. <b> FIGURE NEEDED </b>
+			Given a set of non-intersecting edges that subdivide the plane into non-overlapping faces, the goal is to design a data structure that can support: deletion and insertion of edges and a function $locate(x)$ in which the face in the subdivision containing a point $x$ can be reported. Note that the subdivision need not be connected, provided that there are no intersecting edges.
+		</p>
+		<div style='text-align: center;'>
+			<img src="Figure1.png" width="300" height = "250">
+			<b>Figure 1: Planar vs. Non-planar graphs</b>
+		</div>
+		<p>
+			The fundamental terminology relevant to the dynamic approach is largely the same as that of the static approach. There are, however, some basic concepts that are novel which will be described here.
 		</p>
 		<p>
-			The fundamental terminology relevant to the dynamic approach is largely the same as that of the static approach. There are, however, some basic concepts that are novel and essential to understanding the method of Oh and Ahn.
-		</p>
-		<p>
-			<b>Half-edges.</b> Every edge in the subdivision is considered to be comprised of two directed edges oriented such that the face incident to the half-edge lies to its left relative to its direction. Note that while edges are considered to be comprised of two half-edges, all operations concerning edges (Remove, Insert) involve the whole, indivisible edge. <b> FIGURE NEEDED </b>
+			<b>Half-edges.</b> Every edge in the subdivision is considered to be comprised of two directed edges oriented such that the face incident to the half-edge lies to its left relative to its direction. Note that while edges are considered to be comprised of two half-edges, all operations concerning edges involve the whole, indivisible edge. <b> FIGURE NEEDED </b>
 		</p>
 		<p>
 			<b>Outer/Inner Boundaries.</b> The presence of half-edges motivates a more concrete distinction for the different kinds of boundaries a face in the subdivision can have. An <i> Outer Boundary </i> is the component defining the boundary of a face, $F$, such that $F$ is incident to the half-edges traversable in a counter-clockwise orientation. Every other connected component incident to $F$ is called an <i>Inner Boundary</i>. <b> FIGURE NEEDED </b>
@@ -190,7 +195,7 @@
 			<i>Proof.</i> Assume that two points $x$ and $y$ are in the same face $F$ in $M$. There is a face $F'$ in $M_o$ or in $M_n$ whose outer boundary coincides with the outer boundary of $F$ by Lemma 11. Consider a face $F''$ in $M_o$ or $M_n$ enclosde by $F'$. Neither $x$ nor $y$ is enclosed by $F$ because the edge set of $M_o$ (and $M_n$) is a subset of the edge set of $M$. Since the complete subdivision $M$ is planar, this implies that $x$ and $y$ are in the same face in both $M_o$ and $M_n$. Now assume that two points $x$ and $y$ are in different faces in $M$. Let $F_x$ and $F_y$ be the faces containing $x$ and $y$ in $M$, respectively. This means that $x$ is not enclosed by $F_y$ or $y$ is not enclosed by $F_x$. The outer boundaries of $F_x$ and $F_y$ are distinct. By Lemma 11, there are faces $F_x'$ and $F_y'$ in $M_o$ or in $M_n$ whose outer boundaries coincide with the outer boundaries of $F_x$ and $F_y$, respectively. Note that $x$ is enclosed by $F_x'$ and $y$ is enclosed by $F_y'$. However, either $x$ is not enclosed by $F_y'$ or $y$ is not enclosed by $F_x'$. Therefore, $x$ and $y$ are in different faces in $M_o$ or $M_n$, which proves the lemma. $\blacksquare$
 		</p>
 		<p>
-			As a consequence of Lemma 12, all points in $F$ in $M$ map to the same pair of faces in $M_o$ and $M_n$. All faces in $M$ are thus uniquely identifiable by theses two faces. Therefore, if $F_o$ and $F_n$ are known, $F$ can be found by mapping the names of $F_o$ and $F_n$ to the unique face $F$ associated with those faces. Oh and Ahn do not explain how this mapping is maintained or if the association of $F_o$, $F_n$, and $F$ is calculated when the former two are found. If the mapping is maintained, the locating $F$ from $F_o$ and $F_n$ would ostensibly take constant time, while the overhead for maintaing the mapping is left out. If the mapping is calculated for each query, it is not clear that this can be done in constant time, or at least time strictly less than the time to query the vertical ray-shooting data structure. Regardless, the mapping indeed exists as proven, and Oh and Ahn assert that the time for $locate(x)$ resolution is equal to the time to query the vertical ray-shooting data structure: $Q(n)$.
+			As a consequence of Lemma 12, all points in $F$ map to the same pair of faces in $M_o$ and $M_n$. All faces in $M$ are thus uniquely identifiable by theses two faces. Therefore, if $F_o$ and $F_n$ are known, $F$ can be found by mapping the names of $F_o$ and $F_n$ to the unique face $F$ associated with those faces. Oh and Ahn do not explain how this mapping is maintained or if the association of $F_o$, $F_n$, and $F$ is calculated when the former two are found. If the mapping is maintained, locating $F$ from $F_o$ and $F_n$ would ostensibly take constant time, while the overhead for maintaing the mapping is not obvious. If the mapping is calculated for each query, it is not clear that this can be done in constant time, or at least time strictly less than the time to query the vertical ray-shooting data structure. Regardless, the mapping indeed exists as proven, and Oh and Ahn assert that the time for $locate(x)$ resolution is equal to the time to query the vertical ray-shooting data structure: $Q(n)$.
 		</p>
 		<p>
 			<b>Key Takeaways:</b> Every point $x$ in a face $F$ from the complete subdivision $M$ will be in the same pair of faces $F_o$ and $F_n$ in $M_o$ and $M_n$. The faces $F_o$ and $F_n$ can be found in $Q(n)$, and the mapping to $F$ can be executed with no additional overhead. Therefore, $locate(x)$ can be executed in $Q(n)$.
