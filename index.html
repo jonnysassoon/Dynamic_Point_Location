@@ -2,13 +2,6 @@
 <html>
 <head>
 	<title>Point Location</title>
-	<!-- <link rel="stylesheet" type="text/css" href="main.css" /> -->
-<!-- 	<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
-	</script>
-	<script type="text/javascript"
-	  src="http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-	</script> -->
 	<script type="text/javascript"
 	  src="./LaTeXMathML.js">
 	</script>
@@ -111,7 +104,7 @@
 				The vertices in $M_n$ are maintained in a balanced BST so that there can be a check if a point in the plane is a vertex of $M_n$ in $O(logn)$. Additionally, for every vertex, th edges in $M_n$ adjacent to it are stored in BST in clockwise order around the vertex.
 			</p>
 			<p id="reconstruction">
-				<b>Reconstruction Period.</b> Before explaining the update mechanics for the data structure, the notion of a reconstruction period needs to be introduced. Let $f : \mathbb{N} \to \mathbb{N}$ be an increasing function such that $f(n)/2 \le f(n/2) \le n/4$ for every $n$ greater than some constant. $f(n)$ defines what is called a <i>reconstruction period</i> for the data structure in which $f(n)$ updates are allowed to be processed before the data structure gets rebuilt. Here, $n$ is the number of edges currently in the data structure. Rebuilding the data structure consists of building the static point location data structure in $O(nlogn)$ from the existing subdivision after $f(n)$ edges are inserted/deleted. This notion will be a critical component in the amortized runtime analysis. The specific $f(n)$ will be established later, but the reader can take $f(n)$ to be any $O(\sqrt{n})$ function as a concrete example for the reconstruction time (in truth, any $f$ such that $f(n) = o(n)$ satsifies the above condition).
+				<b>Reconstruction Period.</b> Before explaining the update mechanics for the data structure, the notion of a reconstruction period needs to be introduced. Let $f$ be an increasing function such that $f(n)/2 \le f(n/2) \le n/4$ for every $n$ greater than some constant. $f(n)$ defines what is called a <i>reconstruction period</i> for the data structure in which $f(n)$ updates are allowed to be processed before the data structure gets rebuilt. Here, $n$ is the number of edges currently in the data structure. Rebuilding the data structure consists of building the static point location data structure in $O(nlogn)$ from the existing subdivision after $f(n)$ edges are inserted/deleted. This notion will be a critical component in the amortized runtime analysis. The specific $f(n)$ will be established later, but the reader can take $f(n)$ to be any $O(\sqrt{n})$ function as a concrete example for the reconstruction time (in truth, any $f$ such that $f(n) = o(n)$ satsifies the above condition).
 			</p>
 			<p id="type_change">
 				<b>Type Change.</b> When the data structure is rebuilt at the end of a reconstruction period, every edge is set to old, so $D_n$ is empty. When $insert(e)$ is executed, the one face, $F$, in $M_o$ that $e$ intersects is found in $O(logn)$ time. All edges on the <b>outer</b> boundary of $F$ are set to communal. If $e$ is inserted such that it connects the outer boundary of $F$ to an inner boundary of $F$, then the edges on the inner boundary are set to communal as well. Figure 5 depicts the states of $M_o$ and $M_n$ after a new edge $x$ is added. The new edge that is inserted is set to new. Notice that after this insertion, $D_n$ is always populated with at least $e$ and the outer boundary of $F$, and it may also be populated with a certain inner boundary of $F$ if the condition above is met. Similarly, when $delete(e)$ is executed, the outer boundary of the face(s) incident to $e$ is set to communal.
@@ -214,7 +207,7 @@
 				The total time to simply delete the edge from the data structure and handle the inner boundary pointers is $O(f(n) + logn)$. To insert the communal edges induced by deleting $e$ is $O(f(n)Q(n) + n / f(n) U(n))$ as before. Likewise, the amortized reconstruction time is $O(nlogn / f(n))$. Removing $e$ from the vertical ray-shooting data structure is $U(n)$. Therefore, the total cost to process $delete(e)$ reduces to $O(f(n)Q(n) + n / f(n)U(n))$, the same as for $insert(e)$.
 			</p>
 			<p>
-				<b>Key Takeaways.</b> The fully dynamic data structure utilizes the vertical ray-shooting data structure of Chan and Nekrich and a concatenable queue (implemented as 2-3 trees) for all connected components for the new and communal edges. A reconstruction period is defined in which $f(n)$ updates are allowed where $f : \mathbb{N} \to \mathbb{N}$ is an increasing function such that $f(n)/2 \le f(n/2) \le n/4$ for every $n$ greater than some constant. After the reconstruction period, the static data structure is made from all edges in the current subdivision. The dynamic data structure can be maintained such that it allows the insertion and deletion of edges in $O(f(n)Q(n) + n / f(n)U(n))$.
+				<b>Key Takeaways.</b> The fully dynamic data structure utilizes the vertical ray-shooting data structure of Chan and Nekrich and a concatenable queue (implemented as 2-3 trees) for all connected components for the new and communal edges. A reconstruction period is defined in which $f(n)$ updates are allowed where $f$ is an increasing function such that $f(n)/2 \le f(n/2) \le n/4$ for every $n$ greater than some constant. After the reconstruction period, the static data structure is made from all edges in the current subdivision. The dynamic data structure can be maintained such that it allows the insertion and deletion of edges in $O(f(n)Q(n) + n / f(n)U(n))$.
 			</p>
 	<h2 id="query"> Query Procedure </h2>
 		<p>
