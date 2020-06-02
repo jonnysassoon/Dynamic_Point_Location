@@ -39,7 +39,7 @@
 			Given a set of non-intersecting edges that subdivide the plane into non-overlapping faces, the goal is to design a data structure that can support: deletion and insertion of edges and a function $locate(x)$ in which the face in the subdivision containing a point $x$ can be reported. Note that the subdivision need not be connected, provided that there are no intersecting edges.
 		</p>
 		<div style='text-align: center;'>
-			<img src="Figure1.png" width="300" height = "250">
+			<img src="Figures/figure1.png" width="300" height = "250">
 			<b>Figure 1: Planar vs. Non-planar graphs</b>
 		</div>
 		<p>
@@ -49,7 +49,7 @@
 			<b>Half-edges.</b> Every edge in the subdivision is considered to be comprised of two directed edges oriented such that the face incident to the half-edge lies to its left relative to its direction. Note that while edges are considered to be comprised of two half-edges, all operations concerning edges involve the whole, indivisible edge.
 		</p>
 		<div style='text-align: center;'>
-			<img src="Figures/Figure2.jpg" width="300" height = "250">
+			<img src="Figures/figure2.jpg" width="300" height = "250">
 			<b>Figure 2: A subdivision of edges and its corresponding representation in half edges</b>
 		</div>
 		<p>
@@ -73,11 +73,11 @@
 				When $delete(e)$ is processed, the faces incident to $e$ in the static subdivision are found in $O(1)$ time. If $e$ is incident to two faces, $A$ and $B$, find the sets in $S$ containing $A$ and $B$. If they are in separate sets, they are merged into one set all in $O(\alpha(n))$ time. The root in $S$ corresponding to this new, merged set is given a new unique name. If the two faces are already in the same set in $S$, no change is needed. Maintaining the disjoint set in this way ensures that there is a one-to-one correspondence between the number of faces in the current subdivision and the number of disjoint sets in $S$. This process is illustrate in Figures 3 and 4.
 			</p>
 			<div style='text-align: center;'>
-				<img src="Figures/Figure3.jpg" width="300" height = "250">
+				<img src="Figures/figure3.jpg" width="300" height = "250">
 				<b>Figure 3: Initial subdivision. Notice every face is a singleton set containing just that face's identifier</b>
 			</div>
 			<div style='text-align: center;'>
-				<img src="Figures/Figure4.jpg" width="300" height = "250">
+				<img src="Figures/figure4.jpg" width="300" height = "250">
 				<b>Figure 4: After an edge incident to F and E is deleted, a set containing F and E denotes the new face.</b>
 			</div>
 			<p>
@@ -109,7 +109,7 @@
 				<b>Mechanics.</b> When the data structure is rebuilt at the end of a reconstruction period, every edge is set to old, so $D_n$ is empty. When $insert(e)$ is executed, the one face, $F$, in $M_o$ that $e$ intersects is found in $O(logn)$ time. All edges on the <b>outer</b> boundary of $F$ are set to communal. If $e$ is inserted such that it connects the outer boundary of $F$ to an inner boundary of $F$, then the edges on the inner boundary are set to communal as well. Figure 5 depicts the states of $M_o$ and $M_n$ after a new edge $x$ is added. The new edge that is inserted is set to new. Notice that after this insertion, $D_n$ is always populated with at least $e$ and the outer boundary of $F$, and it may also be populated with a certain inner boundary of $F$ if the condition above is met. Similarly, when $delete(e)$ is executed, the outer boundary of the face(s) incident to $e$ is set to communal.
 			</p>
 			<div style='text-align: center;'>
-				<img src="Figures/Figure5.jpg" width="300" height = "250">
+				<img src="Figures/figure5.jpg" width="300" height = "250">
 				<b>Figure 5: Two examples of adding an edge x to the subdivision and the $\gamma$ it induces</b>
 			</div>
 			<h4>Edge Insertion</h4>
@@ -123,7 +123,7 @@
 				Oh and Ahn prove (Lemma 7) that if $\gamma$ contains at least one old edge, then $\gamma$ will not intersect a connected component that is both enclosed by $\gamma$ and is already in $E_n$. Put another way, if $F_\gamma$ is a face induced by $\gamma$ coming from $E_o$, $F_\gamma$ will not be truncated (refer to Figure 6 for an example of what would be considered truncated) when added to $M_n$ due to $\gamma$ overlapping with a face already in $M_n$ that is inside of $\gamma$ (all provided $\gamma$ has at least one old edge). A consequence of this is that after all of the communal edges of $\gamma$ are inserted, there is a unique face in $M_n$ whose outer boundary is $\gamma$. Let $F$ be the face in $M_n$ that $\gamma$ intersects. Adding $\gamma$ to $M_n$ subdivides $F$ into sub-faces, one of which is $F_\gamma$. Updating the concatenable queue, therefore, requires generating a queue for $F_\gamma$ and managing the necessary changes due to subdividing $F$.
 			</p>
 			<div style='text-align: center;'>
-				<img src="Figures/Figure6.jpg" width="300" height = "250">
+				<img src="Figures/figure6.jpg" width="300" height = "250">
 				<b>Figure 6: Initially, abcd defines the outer boundary of the face containg the new edge x. When the edges are inserted, the area is truncated by changing b for e and f in the outer boundary</b>
 			</div>
 			<p>
@@ -149,7 +149,7 @@
 				<b> Concatenable queues for the boundary of $F$.</b> There a few things to note before explaining this step. Looking at a boundary component is contextualized by whether one is, so to speak, observing from outside the boundary enclosure looking in at the boundary component, or whether one is inside the boundary enclosure looking out at the boundary. Suppose $F$ is a square that encloses another square whose edges are $a$, $b$, $c$, and $d$ (listed clockwise). Inside the small square, suppose there is an edge $e$ which makes a diagonal in the square, dividing it into two faces. In the current subdivision there are three faces: $F$ and the two triangles $A$ and $B$ whose union forms the small square inside $F$. While the connected component $abcd$ does not comprise the outer boundary of a face in the subdivision, it <i>does</i> define an inner boundary component of $F$. Therefore, the presence of a connected component $C$ that defines the inner boundary of a face $F$ does not imply that $C$ defines the outer boundary of a unique face.
 			</p>
 			<div style='text-align: center;'>
-				<img src="Figures/Figure7.jpg" width="300" height = "250">
+				<img src="Figures/figure7.jpg" width="300" height = "250">
 				<b>Figure 7: Diagram of the example above. From F's perspective, abcd is a unit that defines its inner boundary even though no face in the subdivision has abcd as its outer boundary. Though e has mutual ednpoints with edges on the inner boundary of F, F does not know about e, so to speak.</b>
 			</div>
 			<p> 
@@ -159,11 +159,11 @@
 				When $F_\gamma$ is inserted into $M_n$ it might induce a change to the boundary definitions on the interior of $F$. After producing $\gamma$, walk along the old edges of $\gamma$ one by one, and compute all of the <i>endpoints</i> of old edges from $\gamma$ that are already in $M_n$ by using the blanaced binary search tree storing the vertices of $M_n$. (If $F_\gamma$ has no such vertices, then the outer boundary of $F$ does not change and $\gamma$ defines an inner boundary for $F$). For every edge $e'$ that is: 1. in $M_n$, 2. incident to this vertex $u$, and 3. comprises a boundary component <i>relative to $F$ </i> (Figure 10), its boundary component is accessed (in $O(1)$) and split about $u$. For one such boundary component split about $u$, one polygonal chain split at $u$ is used to comprise the outer boundary of $F_\gamma$ and is appended to its concatenable queue (as explained above), while the other (Note: there might not be another <b>FIGURE NEEDED</b>) is used to comprise the outer boundary of another subface. Notice that all old edges in $\gamma$ will contribute to the outer boundaries of two new subfaces, one of which is $F_\gamma$, while each polygonal chain induced by splitting the boundary components at junctions with old edges in $\gamma$ is used to comprise the outery boundary of one new subface. Notice further that as $F$ is being internally subdivided, the previous outer boundary of $F$ is not affected viz. its use as an inner boundary for the face enclosing it. In this way, by splitting the boundary components and merging the polygonal chains with the appropriate old edges of $\gamma$, the concatenable queues of the new subfaces of $F$ can be computed in $O(Nlogn)$ time where $N$ is the number of old edges in $\gamma$ which become communal. Connected components that were previously inner boundaries of $F$ can be reassociated to their new enclosing face by determining which of the new sub-faces encloses it in a similar process outlined above concerning inner boundaries. The total time for this step would thus be $O(f(n)Q(n))$.
 			</p>
 			<div style='text-align: center;'>
-				<img src="Figures/Figure8.jpg" width="300" height = "250">
+				<img src="Figures/figure8.jpg" width="300" height = "250">
 				<b>Figure 8: Connected component needed to be inserted into the new subdivison induced by adding some edge.</b>
 			</div>
 			<div style='text-align: center;'>
-				<img src="Figures/Figure9.jpg" width="300" height = "250">
+				<img src="Figures/figure9.jpg" width="300" height = "250">
 				<b>Figure 9: State of the new subdivision prior to adding the conencted component. Notice some edges seen in the connected component are already in the subdivision</b>
 			</div>
 			<div style='text-align: center;'>
@@ -186,8 +186,8 @@
 			<p>
 				When an edge is deleted, $\gamma$ is produced from $M_o$ and newly-made communal edges are inserted into $M_n$ in the same manner as when $insert(e)$ is executed. Executing $delete(e)$ entails updating the semi-dynamic $D_o$ as explained above, as well as the concatenable queues for the faces in the subdivision comprised of old and communal edges. For $D_n$, the concatenable queues for the new and communal edges need to be updated along with the pointers of the effected edges in $E_n$. There are four cases for how $e$ can be oriented relative to its incident face(s): (1) both endpoints of $e$ lie on the same connected component, (2) the two endpoints lie on two distinct connected components, (3) only one endpoint lies on a connected component, or (4) no edges lie on a connected component. Figure 11 illustrates candidate edges for all such cases. The necessary updates will be discussed for each case.
 			</p>
-			<div style='text-align: center;'>
-				<img src="Figures/Figure12.jpg" width="350" height = "300">
+			<div style='text-align:; center;'>
+				<img src="Figures/figure12.jpg" width="350" height = "300">
 				<b>Figure 11: A subdivision where candidate edges (dotted lines) are numbered according to the case they represent.</b>
 			</div>
 			<p>
