@@ -11,7 +11,6 @@
 	</script>
 	<!-- <script type="text/javascript"
 	  src="./LaTeXMathML.js"> -->
-	</script>
 	<link rel="stylesheet" href="index.css">
 </head>
 
@@ -26,16 +25,23 @@
 	</p>
 	<h2> Contents </h2>
 		<ul> 
-			<li> Background </li>
-			<li> Data Structure Overview </li>
+			<li> <a href="#background"> Background </a></li>
+			<li> <a href="#data_structure_overview">Data Structure Overview </a></li>
 			<ul>
-				<li> Semi-Dynamic Data Structure </li>
-				<li> Fully Dynamic Data Structure </li>
+				<li> <a href="#semi_dynamic"> Semi-Dynamic Data Structure </a></li>
+				<li> <a href="#fully_dynamic"> Fully Dynamic Data Structure </a></li>
+				<ul>
+					<li> <a href="#structure"> Structure </a></li>
+					<li> <a href="#reconstruction"> Reconstruction Period </a></li>
+					<li> <a href="#type_change"> Type Change </a></li>
+					<li> <a href="#insertion"> Edge Insertion </a></li>
+					<li> <a href="#deletion"> Edge Deletion </a></li>
+				</ul>
 			</ul>
-			<li> Query Procedure </li>
-			<li> Conclusion </li>
+			<li> <a href="#query"> Query Procedure </a></li>
+			<li> <a href="#conclusion">Conclusion </a></li>
 		</ul>
-	<h2> Background </h2>
+	<h2 id='background'> Background </h2>
 		<p>
 			Given a set of non-intersecting edges that subdivide the plane into non-overlapping faces, the goal is to design a data structure that can support: deletion and insertion of edges and a function $locate(x)$ in which the face in the subdivision containing a point $x$ can be reported. Note that the subdivision need not be connected, provided that there are no intersecting edges.
 		</p>
@@ -59,11 +65,11 @@
 		<p>
 			<b>Edge types.</b> All edges are said to be in one of three states: old, communal, and new. The exact way in which edges change types will be explained in the update algorithms.
 		</p>
-	<h2> Data Structure Overview </h2>
+	<h2 id='data_structure_overview'> Data Structure Overview </h2>
 		<p> 
 			The data structure, $D$, used to resolve queries is comprised of two data structures, one containing old and communal edges, $D_o$, and the other containing new and communal edges, $D_n$. The update and query protocols for each data structure will be explained in turn.
 		</p>
-		<h3> Semi-Dynamic Data Structure </h3>
+		<h3 id='semi_dynamic'> Semi-Dynamic Data Structure </h3>
 			<p>
 				The data structure described in this section is only semi-dynamic insofar as it supports only $delete(e)$ (where $e$ is an edge in the subdivision) and $locate(x)$. The mechanics of this data structure will be explained here and its use in the fully dynamic solution will be explained later.
 			</p>
@@ -87,11 +93,11 @@
 			<p>
 				<b>Key Takeaways:</b> A semi-dynamic data structure that only supports $delete(e)$ and $locate(x)$ can be achieved by simultaneously maintaining a static point location data structure and a disjoint-set of current faces. With $O(nlogn)$ preprocessing time to form the static data structure and $O(\alpha(n))$ update time, $O(logn)$ query time is achieved.
 			</p>
-		<h3> Fully Dynamic Data Structure </h3>
+		<h3 id='fully_dynamic'> Fully Dynamic Data Structure </h3>
 			<p>
 				The fully dynamic point location data structure consists of two sub data structures, $D_o$ and $D_n$. For the rest of the explanation, $E_o$ and $E_n$ will refer to the set of old + communal edges and communal + new edges, respectively, and $M_o$ and $M_n$ will refer to the subdivisions induced by the corresponding edge sets. $D_o$ is thus the data structure maintaing $E_o$ and $D_n$ is the data structure maintaining $E_n$. $D_o$ is implemented as the semi-dynamic data structure explained above. This section will focus more on the mechanics $D_n$ toward a fully-dynamic data structure, and explain how edges change types.
 			</p>
-			<p>
+			<p id='structure'>
 				<b> Structure.</b> The dynamic data structure underlying $D_n$ needs to support vertical ray-shooting queries for $E_n$. The method of Oh and Ahn uses the <a href="http://tmc.web.engr.illinois.edu/dpl8_15.pdf" target="_blank">data structure by Chan and Nekrich</a>. The update and query time for this data structure will be denoted by $U(n)$ and $Q(n)$, respectively. Note that $U(n) = \Omega(logn)$, $U(n) = o(n)$, and $Q(n) = \Omega(logn)$. Also, each component of the boundary of each face in $M_n$ is stored in a concatenable queue. This queue supports insertion, deletion, splitting the queue into two, and merging two queus into one. The edges for a given boundary component can thus be accesed sequentially as they appear in the boundary, and the queues for each boundary component can be merged so the boundary components for $M_n$ can be traversed. By implementing the queue with a <a href="https://en.wikipedia.org/wiki/2–3_tree" target="_blank">2-3 tree</a>, all operations are supported in $O(logn)$ time where $n$ is the number of elements in the queue. The organization of this queue is briefly described as follows:
 				<ol>
 					<li> Choose an element of the queue, make this the root of the 2-3 tree (and thus the way to access the elements of the queue) </li>
@@ -103,17 +109,17 @@
 			<p>
 				The vertices in $M_n$ are maintained in a balanced BST so that there can be a check if a point in the plane is a vertex of $M_n$ in $O(logn)$. Additionally, for every vertex, th edges in $M_n$ adjacent to it are stored in BST in clockwise order around the vertex.
 			</p>
-			<p>
+			<p id="reconstruction">
 				<b>Reconstruction Period.</b> Before explaining the update mechanics for the data structure, the notion of a reconstruction period needs to be introduced. Let $f : \mathbb{N} \to \mathbb{N}$ be an increasing function such that $f(n)/2 \le f(n/2) \le n/4$ for every $n$ greater than some constant. $f(n)$ defines what is called a <i>reconstruction period</i> for the data structure in which $f(n)$ updates are allowed to be processed before the data structure gets rebuilt. Here, $n$ is the number of edges currently in the data structure. Rebuilding the data structure consists of building the static point location data structure in $O(nlogn)$ from the existing subdivision after $f(n)$ edges are inserted/deleted. This notion will be a critical component in the amortized runtime analysis. The specific $f(n)$ will be established later, but the reader can take $f(n)$ to be any $O(\sqrt{n})$ function as a concrete example for the reconstruction time (in truth, any $f$ such that $f(n) = o(n)$ satsifies the above condition).
 			</p>
-			<p>
-				<b>Mechanics.</b> When the data structure is rebuilt at the end of a reconstruction period, every edge is set to old, so $D_n$ is empty. When $insert(e)$ is executed, the one face, $F$, in $M_o$ that $e$ intersects is found in $O(logn)$ time. All edges on the <b>outer</b> boundary of $F$ are set to communal. If $e$ is inserted such that it connects the outer boundary of $F$ to an inner boundary of $F$, then the edges on the inner boundary are set to communal as well. Figure 5 depicts the states of $M_o$ and $M_n$ after a new edge $x$ is added. The new edge that is inserted is set to new. Notice that after this insertion, $D_n$ is always populated with at least $e$ and the outer boundary of $F$, and it may also be populated with a certain inner boundary of $F$ if the condition above is met. Similarly, when $delete(e)$ is executed, the outer boundary of the face(s) incident to $e$ is set to communal.
+			<p id="type_change">
+				<b>Type Change.</b> When the data structure is rebuilt at the end of a reconstruction period, every edge is set to old, so $D_n$ is empty. When $insert(e)$ is executed, the one face, $F$, in $M_o$ that $e$ intersects is found in $O(logn)$ time. All edges on the <b>outer</b> boundary of $F$ are set to communal. If $e$ is inserted such that it connects the outer boundary of $F$ to an inner boundary of $F$, then the edges on the inner boundary are set to communal as well. Figure 5 depicts the states of $M_o$ and $M_n$ after a new edge $x$ is added. The new edge that is inserted is set to new. Notice that after this insertion, $D_n$ is always populated with at least $e$ and the outer boundary of $F$, and it may also be populated with a certain inner boundary of $F$ if the condition above is met. Similarly, when $delete(e)$ is executed, the outer boundary of the face(s) incident to $e$ is set to communal.
 			</p>
 			<div style='text-align: center;'>
 				<img src="Figures/figure5.jpg" width="300" height = "250">
-				<b>Figure 5: Two examples of adding an edge x to the subdivision and the $\gamma$ it induces</b>
+				<b>Figure 5: Two examples of adding an edge x to the subdivision and the edges it sets to communal</b>
 			</div>
-			<h4>Edge Insertion</h4>
+			<h4 id='insertion'>Edge Insertion</h4>
 			<p>
 				Executing $insert(e)$ entails updating $D_n$ (for $D_o$, edges only change in type but the structure itself remains the same), which in turn entails updating the vertical ray-shooting structure, the concatenable queue, and the pointers in the edges of $E_n$. As noted, when an edge is inserted, the outer boundary of its intersecting face (and possibly the inner boundary if necessary) is changed to communal. Assuming these edges were not already communal, they all need to be inserted into $D_n$ along with $e$. Oh and Ahn prove that the average number of such edges that are made communal at any given time is $O(n / f(n))$. Therefore, the total time needed to update the vertical ray-shooting structure is $O(n / f(n) U(n))$, as $U(n)$ is the update time for a single edge given by Chan and Nekrich. The mechanics for how the structure handles updates are likewise discussed by Chan and Nekrich.
 			</p>
@@ -183,7 +189,7 @@
 			<p>
 				The time to execute all operations on the concatenable queue is $O(logn)$. The time needed to query the vertical ray-shooting structure is $Q(n)$ and the time to update it is is $U(n)$. After $f(n)$ updates, the static data structure is rebuilt from the current edges in the subdivision in $O(nlogn)$ time, amortizing to $O(nlogn / f(n))$ per update during the reconstruction period. The total number of communal edges that need to be inserted into the dynamic data structure after any update is $O(n / f(n))$. Therefore, the total amortized update time for $insert(e)$ is $O(f(n)Q(n) + nlogn/f(n) + n U(n) / f(n))$. Since $U(n) = \Omega(logn)$ the time complexity simplifies to $O(f(n)Q(n) + n / f(n) U(n))$.
 			</p>
-			<h4>Edge Deletion</h4>
+			<h4 id='deletion'>Edge Deletion</h4>
 			<p>
 				When an edge is deleted, $\gamma$ is produced from $M_o$ and newly-made communal edges are inserted into $M_n$ in the same manner as when $insert(e)$ is executed. Executing $delete(e)$ entails updating the semi-dynamic $D_o$ as explained above, as well as the concatenable queues for the faces in the subdivision comprised of old and communal edges. For $D_n$, the concatenable queues for the new and communal edges need to be updated along with the pointers of the effected edges in $E_n$. There are four cases for how $e$ can be oriented relative to its incident face(s): (1) both endpoints of $e$ lie on the same connected component, (2) the two endpoints lie on two distinct connected components, (3) only one endpoint lies on a connected component, or (4) no edges lie on a connected component. Figure 11 illustrates candidate edges for all such cases. The necessary updates will be discussed for each case.
 			</p>
@@ -209,7 +215,7 @@
 			<p>
 				<b>Key Takeaways.</b> The fully dynamic data structure utilizes the vertical ray-shooting data structure of Chan and Nekrich and a concatenable queue (implemented as 2-3 trees) for all connected components for the new and communal edges. A reconstruction period is defined in which $f(n)$ updates are allowed where $f : \mathbb{N} \to \mathbb{N}$ is an increasing function such that $f(n)/2 \le f(n/2) \le n/4$ for every $n$ greater than some constant. After the reconstruction period, the static data structure is made from all edges in the current subdivision. The dynamic data structure can be maintained such that it allows the insertion and deletion of edges in $O(f(n)Q(n) + n / f(n)U(n))$.
 			</p>
-	<h2> Query Procedure </h2>
+	<h2 id="query"> Query Procedure </h2>
 		<p>
 			The goal of this section is to explain how to answer $locate(x)$ where $x$ is a point in the plane. The complete subdivision $M$ is the union of $M_o$ and $M_n$ which is underlied by $D_o$ and $D_n$. Let $F_o$ and $F_n$ be the faces in $M_o$ and $M_n$, respectively, containing the point $x$. $F_o$ can be calculated in $O(logn)$ as described above. For $F_n$, the edge $e$ immediately above $x$ is calculated using the vertical ray-shooting data structure in $D_n$. The two faces incident to $e$ are accessed in $O(1)$. Oh an Ahn argue that because the half-edges for an edge are oriented consistenly, it can be determined which of the two faces contain $x$ in constant time. However, I do not see how this is possible because the orientation of $e$ will be the same relative to $x$ whether $e$ forms an outer boundary relative to $x$ (and $x$ is inside that outer boundary), or $e$ forms an inner boundary relative to $x$ (and $x$ is in the face enclosing $e$). It is not obvious to me how this can be determined with only a constant number of additional calculations. Nonetheless, it will be assumed that Oh and Ahn's assertion is corrected and that $F_n$ is calculable in $Q(n)$.
 		</p>
@@ -240,7 +246,7 @@
 		<p>
 			<b>Key Takeaways:</b> Every point $x$ in a face $F$ from the complete subdivision $M$ will be in the same pair of faces $F_o$ and $F_n$ in $M_o$ and $M_n$. The faces $F_o$ and $F_n$ can be found in $Q(n)$, and the mapping to $F$ can be executed with no additional overhead. Therefore, $locate(x)$ can be executed in $Q(n)$.
 		</p>
-	<h2> Conclusion </h2>
+	<h2 id="conclusion"> Conclusion </h2>
 		<p>
 			The complete dynamic data structure allows queries to be processed after the insertion and deletion of edges. It is comprised of both a semi-dynamic data structure that only adapts from edge deletion, and a fully dynamic data structure that adapts from edge deletion and insertion. The mechanics of this data structure is such that updates can be processed in $O(f(n)Q(n) + n / f(n)U(n))$ amoritzed time. The query procedure allows the face containing query point $x$ to be reported in $Q(n)$. The reconstruction period, $f(n)$, is chosen to be $\sqrt{nU(n)Q(n)}$, and the data structure of Chan and Nekrich yield $Q(n) = O(log(loglogn)^{3/2})$ and $U(n) = O(lognloglogn)$. Therefore, Oh and Ahn provide a data structure that allows for dynamic point location queries with amortized update time of $O(\sqrt{n}logn{(loglogn)}^{3/2})$ and query time of $O(logn{(loglogn)}^2)$.
 		</p>
